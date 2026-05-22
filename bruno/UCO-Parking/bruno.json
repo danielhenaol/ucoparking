@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "UCO Parking",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,0 +1,39 @@
+package co.edu.uco.ucoparking.domain.model;
+
+import java.util.UUID;
+
+/**
+ * Modelo de dominio que representa un tipo de identificación.
+ */
+public class IdType {
+
+    private UUID id;
+    private String name;
+
+    public IdType(UUID id, String name) {
+        setId(id);
+        setName(name);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private void setId(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El id del tipo de identificación es obligatorio.");
+        }
+        this.id = id;
+    }
+
+    private void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del tipo de identificación es obligatorio.");
+        }
+        this.name = name.trim();
+    }
+}
