@@ -16,7 +16,7 @@
     <artifactId>ucoparking01</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ucoparking01</name>
-    <description>UCO Parking - Java 26, arquitectura hexagonal, JPA, Docker, REST y Auth0</description>
+    <description>UCO Parking - Java 26, arquitectura hexagonal, JPA, Docker, REST, Auth0 y Azure Key Vault</description>
 
     <properties>
         <java.version>26</java.version>
@@ -61,6 +61,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
+        <!-- Azure Key Vault Secrets: baúl de secretos real compatible con Spring Boot 4 -->
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter-keyvault-secrets</artifactId>
+            <version>7.2.0</version>
         </dependency>
 
         <!-- Swagger / OpenAPI -->
