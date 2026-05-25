@@ -1,4 +1,8 @@
 package co.edu.uco.ucoparking.domain.model;
 
-public class ReservationStatus {
+public enum ReservationStatus {
+    ACTIVE,
+    OCCUPIED,
+    CANCELLED,
+    EXPIRED
 }

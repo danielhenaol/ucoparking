@@ -12,4 +12,7 @@ public interface AcademicProgramRepositoryPort {
     List<AcademicProgram> findAll();
     AcademicProgram update(UUID id, AcademicProgram academicProgram);
     void deleteById(UUID id);
+
+    interface ParkingSpaceRepositoryPort {
+    }
 }

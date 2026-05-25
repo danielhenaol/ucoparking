@@ -12,4 +12,7 @@ public interface IdTypeRepositoryPort {
     List<IdType> findAll();
     IdType update(UUID id, IdType idType);
     void deleteById(UUID id);
+
+    interface ReservationRepositoryPort {
+    }
 }

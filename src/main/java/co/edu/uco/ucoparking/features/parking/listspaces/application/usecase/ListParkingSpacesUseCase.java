@@ -1,11 +1,11 @@
-package co.edu.uco.ucoparking.application.inputport;
+package co.edu.uco.ucoparking.features.parking.listspaces.application.usecase;
 
 import java.util.List;
 
 import co.edu.uco.ucoparking.domain.model.ParkingSpace;
 import co.edu.uco.ucoparking.domain.model.ParkingSpaceStatus;
 
-public interface ListParkingSpacesInputPort {
+public interface ListParkingSpacesUseCase {
 
     List<ParkingSpace> execute();
 
