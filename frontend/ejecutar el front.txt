@@ -1,0 +1,20 @@
+ejecutar el front 
+cd C:\Users\ACER\Downloads\ucoparking-github\frontend
+ luego npm.cmd install
+
+luego npm.cmd run dev
+
+Para guardar en git 
+cd C:\Users\ACER\Downloads\ucoparking-github
+
+luego 
+git status
+
+luego 
+git add
+
+luego 
+git commit -m "Conectar SSE para actualizar tablero de parqueadero"
+
+luego 
+git push
