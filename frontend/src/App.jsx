@@ -1,159 +1,297 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
-  BookOpen,
-  Building2,
+  AlertCircle,
   Car,
   CheckCircle2,
-  GraduationCap,
-  Mail,
-  Pencil,
-  Phone,
-  Plus,
+  Clock,
+  LogOut,
+  ParkingCircle,
   RefreshCw,
-  Search,
   ShieldCheck,
-  Trash2,
-  UserRound,
-  Users
+  UserPlus
 } from 'lucide-react';
-import {
-  createStudent,
-  deleteStudent,
-  getStudents,
-  updateStudent
-} from './services/studentService.js';
 
-const emptyForm = {
-  identification: '',
-  institutionalCode: '',
-  name: '',
-  lastName: '',
-  email: '',
-  mobileNumber: ''
+import {
+  createParkingEventSource,
+  getParkingSpaces,
+  reserveParkingSpace
+} from './services/parkingService.js';
+
+const initialReservationForm = {
+  vehiclePlate: '',
+  entryTime: '',
+  exitTime: ''
 };
 
 function App() {
-  const [students, setStudents] = useState([]);
-  const [form, setForm] = useState(emptyForm);
-  const [editingId, setEditingId] = useState(null);
-  const [search, setSearch] = useState('');
+  const {
+    isAuthenticated,
+    isLoading,
+    user,
+    loginWithRedirect,
+    logout,
+    getAccessTokenSilently
+  } = useAuth0();
+
+  const [parkingSpaces, setParkingSpaces] = useState([]);
+  const [selectedSpace, setSelectedSpace] = useState(null);
+  const [reservationForm, setReservationForm] = useState(initialReservationForm);
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const filteredStudents = useMemo(() => {
-    const text = search.toLowerCase().trim();
+  const summary = useMemo(() => {
+    const available = parkingSpaces.filter((space) => space.status === 'AVAILABLE').length;
+    const reserved = parkingSpaces.filter((space) => space.status === 'RESERVED').length;
+    const occupied = parkingSpaces.filter((space) => space.status === 'OCCUPIED').length;
 
-    if (!text) {
-      return students;
-    }
+    return {
+      available,
+      reserved,
+      occupied,
+      total: parkingSpaces.length
+    };
+  }, [parkingSpaces]);
 
-    return students.filter((student) =>
-      `${student.identification} ${student.institutionalCode} ${student.name} ${student.lastName} ${student.email} ${student.mobileNumber}`
-        .toLowerCase()
-        .includes(text)
-    );
-  }, [students, search]);
+  async function getToken() {
+    return getAccessTokenSilently({
+      authorizationParams: {
+        audience: import.meta.env.VITE_AUTH0_AUDIENCE
+      }
+    });
+  }
 
-  async function loadStudents() {
+  async function loadParkingSpaces() {
     setLoading(true);
     setError('');
 
     try {
-      const data = await getStudents();
-      setStudents(data || []);
+      const accessToken = isAuthenticated ? await getToken() : null;
+      const data = await getParkingSpaces(accessToken);
+      setParkingSpaces(data || []);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'No se pudieron cargar los espacios.');
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    loadStudents();
-  }, []);
+    if (!isAuthenticated) {
+      return;
+    }
 
-  function handleChange(event) {
+    loadParkingSpaces();
+
+    const eventSource = createParkingEventSource();
+
+    eventSource.addEventListener('SPACE_RESERVED', () => {
+      loadParkingSpaces();
+    });
+
+    eventSource.addEventListener('SPACE_OCCUPIED', () => {
+      loadParkingSpaces();
+    });
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [isAuthenticated]);
+
+  function handleReservationChange(event) {
     const { name, value } = event.target;
 
-    setForm((currentForm) => ({
+    setReservationForm((currentForm) => ({
       ...currentForm,
       [name]: value
     }));
   }
 
-  function validateForm() {
-    return Object.values(form).every((value) => value.trim() !== '');
+  function handleLoginWithAuth0() {
+    loginWithRedirect();
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setMessage('');
-    setError('');
-
-    if (!validateForm()) {
-      setError('Todos los campos son obligatorios.');
-      return;
-    }
-
-    try {
-      if (editingId) {
-        await updateStudent(editingId, form);
-        setMessage('Estudiante actualizado correctamente.');
-      } else {
-        await createStudent(form);
-        setMessage('Estudiante registrado correctamente.');
+  function handleRegisterWithAuth0() {
+    loginWithRedirect({
+      authorizationParams: {
+        screen_hint: 'signup'
       }
-
-      setForm(emptyForm);
-      setEditingId(null);
-      await loadStudents();
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-  function handleEdit(student) {
-    setEditingId(student.id);
-    setForm({
-      identification: student.identification || '',
-      institutionalCode: student.institutionalCode || '',
-      name: student.name || '',
-      lastName: student.lastName || '',
-      email: student.email || '',
-      mobileNumber: student.mobileNumber || ''
     });
-    setMessage('Editando estudiante seleccionado.');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  async function handleDelete(id) {
-    const confirmDelete = window.confirm('¿Seguro que deseas eliminar este estudiante?');
+  function handleLogout() {
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin
+      }
+    });
+  }
 
-    if (!confirmDelete) {
-      return;
-    }
-
+  function openReservationModal(space) {
     setMessage('');
     setError('');
 
+    if (space.status !== 'AVAILABLE') {
+      setError('Solo se pueden reservar espacios disponibles.');
+      return;
+    }
+
+    setSelectedSpace(space);
+    setReservationForm(initialReservationForm);
+  }
+
+  function closeReservationModal() {
+    setSelectedSpace(null);
+    setReservationForm(initialReservationForm);
+  }
+
+  function validateReservationForm() {
+    if (!reservationForm.vehiclePlate.trim()) {
+      setError('La placa del vehículo es obligatoria.');
+      return false;
+    }
+
+    if (!reservationForm.entryTime) {
+      setError('La hora de entrada es obligatoria.');
+      return false;
+    }
+
+    if (!reservationForm.exitTime) {
+      setError('La hora de salida es obligatoria.');
+      return false;
+    }
+
+    if (new Date(reservationForm.exitTime) <= new Date(reservationForm.entryTime)) {
+      setError('La hora de salida debe ser posterior a la hora de entrada.');
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleReserve(event) {
+    event.preventDefault();
+    setError('');
+    setMessage('');
+
+    if (!selectedSpace) {
+      setError('Debes seleccionar un espacio.');
+      return;
+    }
+
+    const confirmReservation = window.confirm(
+      `¿Deseas reservar el espacio ${selectedSpace.code}? Tendrás 30 minutos para ocuparlo.`
+    );
+
+    if (!confirmReservation) {
+      return;
+    }
+
+    if (!validateReservationForm()) {
+      return;
+    }
+
     try {
-      await deleteStudent(id);
-      setMessage('Estudiante eliminado correctamente.');
-      await loadStudents();
+      const accessToken = await getToken();
+
+      await reserveParkingSpace(
+        {
+          parkingSpaceId: selectedSpace.id,
+          vehiclePlate: reservationForm.vehiclePlate,
+          entryTime: reservationForm.entryTime,
+          exitTime: reservationForm.exitTime
+        },
+        accessToken
+      );
+
+      setMessage(`Espacio ${selectedSpace.code} reservado correctamente. Tienes 30 minutos para ocuparlo.`);
+      closeReservationModal();
+      await loadParkingSpaces();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'No se pudo realizar la reserva.');
     }
   }
 
-  function cancelEdit() {
-    setEditingId(null);
-    setForm(emptyForm);
-    setMessage('Edición cancelada.');
+  function getStatusLabel(status) {
+    const labels = {
+      AVAILABLE: 'Disponible',
+      RESERVED: 'Reservado',
+      OCCUPIED: 'Ocupado'
+    };
+
+    return labels[status] || status;
   }
 
-  const totalStudents = students.length;
-  const filteredTotal = filteredStudents.length;
+  if (isLoading) {
+    return (
+      <main className="authPage">
+        <section className="loginCard">
+          <div className="loginBrand">
+            <div className="logoCircle">
+              <ParkingCircle size={38} />
+            </div>
+
+            <div>
+              <span className="eyebrow">UCO Parking</span>
+              <h1>Cargando...</h1>
+              <p>Estamos validando la sesión con Auth0.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <main className="authPage">
+        <section className="loginCard">
+          <div className="loginBrand">
+            <div className="logoCircle">
+              <ParkingCircle size={38} />
+            </div>
+
+            <div>
+              <span className="eyebrow">UCO Parking</span>
+              <h1>Iniciar sesión</h1>
+              <p>
+                Accede con Auth0 para reservar espacios de parqueadero en la Universidad Católica de Oriente.
+              </p>
+            </div>
+          </div>
+
+          {error && (
+            <div className="alert error">
+              <AlertCircle size={18} />
+              {error}
+            </div>
+          )}
+
+          <div className="loginForm">
+            <button className="primaryButton" type="button" onClick={handleLoginWithAuth0}>
+              <ShieldCheck size={18} />
+              Continuar con Auth0
+            </button>
+
+            <button className="auth0Button" type="button" onClick={handleRegisterWithAuth0}>
+              <UserPlus size={18} />
+              Registrarme con Auth0
+            </button>
+          </div>
+
+          <p className="registerText">
+            El inicio de sesión ahora se gestiona mediante Auth0 como Identity Provider.
+          </p>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="pageShell">
@@ -161,232 +299,197 @@ function App() {
         <div className="brandBlock">
           <div className="ucoLogo">UCO</div>
           <div>
-            <strong>Universidad Católica de Oriente</strong>
-            <span>Sistema académico de parqueadero</span>
+            <strong>UCO Parking</strong>
+            <span>Reserva de espacios de parqueadero</span>
           </div>
         </div>
 
-        <div className="navPill">
-          <ShieldCheck size={18} />
-          Proyecto UCO Parking
+        <div className="topActions">
+          <button className="refreshButton" onClick={loadParkingSpaces} disabled={loading}>
+            <RefreshCw size={18} />
+            {loading ? 'Actualizando...' : 'Actualizar'}
+          </button>
+
+          <button className="logoutButton" onClick={handleLogout}>
+            <LogOut size={18} />
+            Salir
+          </button>
         </div>
       </nav>
 
       <section className="hero">
-        <div className="heroText">
-          <span className="eyebrow">Frontend institucional</span>
-          <h1>Gestión de estudiantes para UCO Parking</h1>
+        <div>
+          <span className="eyebrow">Panel reactivo</span>
+          <h1>Reserva tu espacio de parqueadero</h1>
           <p>
-            Panel moderno para registrar, consultar, actualizar y eliminar estudiantes conectados al backend de Spring Boot.
+            Consulta espacios disponibles, reservados y ocupados. Cuando un espacio cambia de estado,
+            el tablero se actualiza mediante SSE.
           </p>
-
-          <div className="heroActions">
-            <a href="#studentForm" className="primaryLink">
-              <Plus size={18} />
-              Registrar estudiante
-            </a>
-            <button className="ghostButton" onClick={loadStudents} disabled={loading}>
-              <RefreshCw size={18} />
-              {loading ? 'Actualizando...' : 'Actualizar lista'}
-            </button>
-          </div>
         </div>
 
         <div className="heroCard">
-          <div className="heroCardIcon">
-            <Car size={42} />
-          </div>
-          <p>Control de acceso vehicular</p>
-          <strong>{totalStudents}</strong>
-          <span>estudiantes registrados</span>
+          <Car size={46} />
+          <strong>{summary.total}</strong>
+          <span>espacios registrados</span>
         </div>
       </section>
 
+      {user && (
+        <div className="alert success">
+          <CheckCircle2 size={18} />
+          Bienvenido/a, {user.name || user.email}.
+        </div>
+      )}
+
       <section className="statsGrid">
-        <article className="statCard">
-          <Users size={24} />
+        <article className="statCard available">
+          <CheckCircle2 size={26} />
           <div>
-            <strong>{totalStudents}</strong>
-            <span>Total registros</span>
+            <strong>{summary.available}</strong>
+            <span>Disponibles</span>
           </div>
         </article>
 
-        <article className="statCard">
-          <Search size={24} />
+        <article className="statCard reserved">
+          <Clock size={26} />
           <div>
-            <strong>{filteredTotal}</strong>
-            <span>Coincidencias visibles</span>
+            <strong>{summary.reserved}</strong>
+            <span>Reservados</span>
           </div>
         </article>
 
-        <article className="statCard">
-          <Building2 size={24} />
+        <article className="statCard occupied">
+          <Car size={26} />
           <div>
-            <strong>UCO</strong>
-            <span>Plantilla institucional</span>
+            <strong>{summary.occupied}</strong>
+            <span>Ocupados</span>
           </div>
         </article>
       </section>
 
-      <section className="contentGrid">
-        <article className="panel formPanel" id="studentForm">
-          <div className="panelHeader">
-            <div>
-              <span className="sectionTag"><GraduationCap size={16} /> Estudiante</span>
-              <h2>{editingId ? 'Actualizar estudiante' : 'Registrar nuevo estudiante'}</h2>
-              <p>Completa la información para enviarla al servicio REST.</p>
-            </div>
-            <div className="softIcon"><BookOpen size={24} /></div>
+      {message && (
+        <div className="alert success">
+          <CheckCircle2 size={18} />
+          {message}
+        </div>
+      )}
+
+      {error && (
+        <div className="alert error">
+          <AlertCircle size={18} />
+          {error}
+        </div>
+      )}
+
+      <section className="panel">
+        <div className="panelHeader">
+          <div>
+            <span className="sectionTag">
+              <ParkingCircle size={16} />
+              Parqueadero
+            </span>
+            <h2>Espacios de parqueadero</h2>
+            <p>Selecciona un espacio disponible para realizar la reserva.</p>
           </div>
+        </div>
 
-          {message && <div className="alert success"><CheckCircle2 size={18} /> {message}</div>}
-          {error && <div className="alert error">{error}</div>}
+        <div className="legend">
+          <span><i className="dot availableDot"></i> Disponible</span>
+          <span><i className="dot reservedDot"></i> Reservado</span>
+          <span><i className="dot occupiedDot"></i> Ocupado</span>
+        </div>
 
-          <form onSubmit={handleSubmit} className="studentForm">
-            <label>
-              Identificación
-              <input
-                name="identification"
-                value={form.identification}
-                onChange={handleChange}
-                placeholder="1001234567"
-              />
-            </label>
-
-            <label>
-              Código institucional
-              <input
-                name="institutionalCode"
-                value={form.institutionalCode}
-                onChange={handleChange}
-                placeholder="UCO2026001"
-              />
-            </label>
-
-            <div className="twoColumns">
-              <label>
-                Nombre
-                <input
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Kelly"
-                />
-              </label>
-
-              <label>
-                Apellido
-                <input
-                  name="lastName"
-                  value={form.lastName}
-                  onChange={handleChange}
-                  placeholder="Giraldo"
-                />
-              </label>
+        <div className="spacesGrid">
+          {parkingSpaces.length === 0 ? (
+            <div className="emptyState">
+              <ParkingCircle size={42} />
+              <h3>No hay espacios para mostrar</h3>
+              <p>Verifica que el backend esté encendido y que la tabla parking_spaces tenga datos.</p>
             </div>
+          ) : (
+            parkingSpaces.map((space) => (
+              <article
+                key={space.id}
+                className={`spaceCard ${space.status.toLowerCase()}`}
+              >
+                <div className="spaceCode">{space.code}</div>
+                <span className="spaceStatus">{getStatusLabel(space.status)}</span>
 
-            <label>
-              Correo institucional
-              <input
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="kelly.giraldo@uco.edu.co"
-                type="email"
-              />
-            </label>
-
-            <label>
-              Celular
-              <input
-                name="mobileNumber"
-                value={form.mobileNumber}
-                onChange={handleChange}
-                placeholder="3001234567"
-              />
-            </label>
-
-            <div className="buttonGroup">
-              <button type="submit" className="primaryButton">
-                {editingId ? 'Guardar cambios' : 'Registrar estudiante'}
-              </button>
-
-              {editingId && (
-                <button type="button" className="secondaryButton" onClick={cancelEdit}>
-                  Cancelar edición
+                <button
+                  className="reserveButton"
+                  disabled={space.status !== 'AVAILABLE'}
+                  onClick={() => openReservationModal(space)}
+                >
+                  Reservar espacio
                 </button>
-              )}
-            </div>
-          </form>
-        </article>
-
-        <article className="panel studentsPanel">
-          <div className="panelHeader listHeader">
-            <div>
-              <span className="sectionTag"><Users size={16} /> Registros</span>
-              <h2>Listado de estudiantes</h2>
-              <p>Busca, edita o elimina registros almacenados en la base de datos.</p>
-            </div>
-          </div>
-
-          <div className="toolbar">
-            <div className="searchBox">
-              <Search size={18} />
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscar por nombre, código, correo..."
-              />
-            </div>
-
-            <button className="refreshButton" onClick={loadStudents} disabled={loading}>
-              <RefreshCw size={18} />
-              {loading ? 'Cargando...' : 'Actualizar'}
-            </button>
-          </div>
-
-          <div className="studentCards">
-            {filteredStudents.length === 0 ? (
-              <div className="emptyState">
-                <div className="emptyIcon"><UserRound size={34} /></div>
-                <h3>No hay estudiantes para mostrar</h3>
-                <p>Registra uno nuevo o verifica que el backend esté encendido.</p>
-              </div>
-            ) : (
-              filteredStudents.map((student) => (
-                <article className="studentCard" key={student.id}>
-                  <div className="studentAvatar">
-                    {(student.name || 'E').charAt(0)}{(student.lastName || '').charAt(0)}
-                  </div>
-
-                  <div className="studentInfo">
-                    <div className="studentTitleRow">
-                      <div>
-                        <h3>{student.name} {student.lastName}</h3>
-                        <span>{student.institutionalCode}</span>
-                      </div>
-                      <div className="cardActions">
-                        <button className="smallButton" onClick={() => handleEdit(student)} title="Editar estudiante">
-                          <Pencil size={16} />
-                        </button>
-                        <button className="smallButton danger" onClick={() => handleDelete(student.id)} title="Eliminar estudiante">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="studentMeta">
-                      <span><UserRound size={15} /> {student.identification}</span>
-                      <span><Mail size={15} /> {student.email}</span>
-                      <span><Phone size={15} /> {student.mobileNumber}</span>
-                    </div>
-                  </div>
-                </article>
-              ))
-            )}
-          </div>
-        </article>
+              </article>
+            ))
+          )}
+        </div>
       </section>
+
+      {selectedSpace && (
+        <section className="modalOverlay">
+          <article className="modalCard">
+            <div className="modalHeader">
+              <div>
+                <span className="sectionTag">
+                  <Car size={16} />
+                  Reserva
+                </span>
+                <h2>Reservar espacio {selectedSpace.code}</h2>
+                <p>Una vez reservado, tendrás 30 minutos para ocuparlo.</p>
+              </div>
+
+              <button className="closeButton" onClick={closeReservationModal}>
+                ×
+              </button>
+            </div>
+
+            <form className="reservationForm" onSubmit={handleReserve}>
+              <label>
+                Placa del vehículo
+                <input
+                  name="vehiclePlate"
+                  value={reservationForm.vehiclePlate}
+                  onChange={handleReservationChange}
+                  placeholder="ABC123"
+                />
+              </label>
+
+              <label>
+                Hora de entrada
+                <input
+                  type="datetime-local"
+                  name="entryTime"
+                  value={reservationForm.entryTime}
+                  onChange={handleReservationChange}
+                />
+              </label>
+
+              <label>
+                Hora de salida
+                <input
+                  type="datetime-local"
+                  name="exitTime"
+                  value={reservationForm.exitTime}
+                  onChange={handleReservationChange}
+                />
+              </label>
+
+              <div className="modalActions">
+                <button type="button" className="secondaryButton" onClick={closeReservationModal}>
+                  Cancelar
+                </button>
+
+                <button type="submit" className="primaryButton">
+                  Confirmar reserva
+                </button>
+              </div>
+            </form>
+          </article>
+        </section>
+      )}
     </main>
   );
 }

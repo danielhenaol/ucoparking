@@ -16,7 +16,7 @@
     <artifactId>ucoparking01</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ucoparking01</name>
-    <description>UCO Parking - Java 26, arquitectura hexagonal, JPA, Docker y REST</description>
+    <description>UCO Parking - Java 26, arquitectura hexagonal, JPA, Docker, REST y Auth0</description>
 
     <properties>
         <java.version>26</java.version>
@@ -51,6 +51,18 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!-- Seguridad con Spring Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Validación de tokens JWT con Auth0 / OAuth2 Resource Server -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+
         <!-- Swagger / OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -76,6 +88,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Pruebas de seguridad -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -14,20 +14,28 @@ import co.edu.uco.ucoparking.domain.model.Reservation;
 import co.edu.uco.ucoparking.domain.model.ReservationStatus;
 import co.edu.uco.ucoparking.features.parking.reservespace.application.dto.ReserveParkingSpaceRequestDto;
 import co.edu.uco.ucoparking.features.parking.reservespace.application.usecase.ReserveParkingSpaceUseCase;
+import co.edu.uco.ucoparking.infrastructure.entrypoint.sse.ParkingSseController;
 
 /**
  * Implementación del caso de uso para reservar un espacio de parqueadero.
+ *
+ * Esta clase contiene la lógica principal de la reserva:
+ * valida los datos, consulta el espacio, verifica disponibilidad,
+ * cambia el estado del espacio y guarda la reserva.
  */
 @Service
 public class ReserveParkingSpaceUseCaseImpl implements ReserveParkingSpaceUseCase {
 
     private final ParkingSpaceOutputPort parkingSpaceOutputPort;
     private final ReservationOutputPort reservationOutputPort;
+    private final ParkingSseController parkingSseController;
 
     public ReserveParkingSpaceUseCaseImpl(ParkingSpaceOutputPort parkingSpaceOutputPort,
-                                          ReservationOutputPort reservationOutputPort) {
+                                          ReservationOutputPort reservationOutputPort,
+                                          ParkingSseController parkingSseController) {
         this.parkingSpaceOutputPort = parkingSpaceOutputPort;
         this.reservationOutputPort = reservationOutputPort;
+        this.parkingSseController = parkingSseController;
     }
 
     @Override
@@ -58,7 +66,11 @@ public class ReserveParkingSpaceUseCaseImpl implements ReserveParkingSpaceUseCas
 
         parkingSpaceOutputPort.save(parkingSpace.reserve());
 
-        return reservationOutputPort.save(reservation);
+        var savedReservation = reservationOutputPort.save(reservation);
+
+        parkingSseController.publish("SPACE_RESERVED", savedReservation);
+
+        return savedReservation;
     }
 
     private void validateRequest(ReserveParkingSpaceRequestDto request) {

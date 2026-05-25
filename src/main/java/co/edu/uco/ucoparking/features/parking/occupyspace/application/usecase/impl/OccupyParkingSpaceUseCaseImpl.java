@@ -8,8 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import co.edu.uco.ucoparking.application.outputport.ParkingSpaceOutputPort;
 import co.edu.uco.ucoparking.application.outputport.ReservationOutputPort;
 import co.edu.uco.ucoparking.crosscutting.exception.UcoParkingException;
+import co.edu.uco.ucoparking.domain.model.Reservation;
 import co.edu.uco.ucoparking.domain.model.ReservationStatus;
 import co.edu.uco.ucoparking.features.parking.occupyspace.application.usecase.OccupyParkingSpaceUseCase;
+import co.edu.uco.ucoparking.infrastructure.entrypoint.sse.ParkingSseController;
 
 /**
  * Implementación del caso de uso para ocupar un espacio reservado.
@@ -19,16 +21,19 @@ public class OccupyParkingSpaceUseCaseImpl implements OccupyParkingSpaceUseCase 
 
     private final ReservationOutputPort reservationOutputPort;
     private final ParkingSpaceOutputPort parkingSpaceOutputPort;
+    private final ParkingSseController parkingSseController;
 
     public OccupyParkingSpaceUseCaseImpl(ReservationOutputPort reservationOutputPort,
-                                         ParkingSpaceOutputPort parkingSpaceOutputPort) {
+                                         ParkingSpaceOutputPort parkingSpaceOutputPort,
+                                         ParkingSseController parkingSseController) {
         this.reservationOutputPort = reservationOutputPort;
         this.parkingSpaceOutputPort = parkingSpaceOutputPort;
+        this.parkingSseController = parkingSseController;
     }
 
     @Override
     @Transactional
-    public co.edu.uco.ucoparking.domain.model.Reservation execute(UUID reservationId) {
+    public Reservation execute(UUID reservationId) {
         if (reservationId == null) {
             throw new UcoParkingException("El id de la reserva es obligatorio.");
         }
@@ -49,6 +54,10 @@ public class OccupyParkingSpaceUseCaseImpl implements OccupyParkingSpaceUseCase 
 
         parkingSpaceOutputPort.save(parkingSpace.occupy());
 
-        return reservationOutputPort.save(reservation.occupy());
+        var savedReservation = reservationOutputPort.save(reservation.occupy());
+
+        parkingSseController.publish("SPACE_OCCUPIED", savedReservation);
+
+        return savedReservation;
     }
 }
