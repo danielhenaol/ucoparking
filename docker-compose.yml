@@ -39,6 +39,19 @@ services:
       - ./kong:/kong/declarative
     restart: unless-stopped
 
+  modsecurity:
+    image: owasp/modsecurity-crs:nginx
+    container_name: ucoparking-waf
+    environment:
+      BACKEND: "http://ucoparking-kong:8000"
+      PORT: "8080"
+      MODSEC_RULE_ENGINE: "On"
+    ports:
+      - "80:8080"
+    depends_on:
+      - kong
+    restart: unless-stopped
+
 volumes:
   sqlserver_data:
   redis_data:
