@@ -10,9 +10,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * Entidad JPA que representa la tabla parking_spaces.
- */
 @Entity
 @Table(name = "parking_spaces")
 public class ParkingSpaceJPAEntity {

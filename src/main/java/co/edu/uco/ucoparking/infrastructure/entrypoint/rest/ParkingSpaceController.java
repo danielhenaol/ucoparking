@@ -13,9 +13,6 @@ import co.edu.uco.ucoparking.application.inputport.ListParkingSpacesInputPort;
 import co.edu.uco.ucoparking.domain.model.ParkingSpace;
 import co.edu.uco.ucoparking.domain.model.ParkingSpaceStatus;
 
-/**
- * Controlador REST para consultar espacios de parqueadero.
- */
 @RestController
 @RequestMapping("/api/v1/parking/spaces")
 public class ParkingSpaceController {

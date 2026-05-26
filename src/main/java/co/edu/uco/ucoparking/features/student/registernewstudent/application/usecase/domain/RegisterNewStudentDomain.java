@@ -1,9 +1,5 @@
 package co.edu.uco.ucoparking.features.student.registernewstudent.application.usecase.domain;
 
-/**
- * Objeto de dominio específico del caso de uso RegisterNewStudent.
- * Viaja desde el inputport hasta el usecase sin depender del modelo global.
- */
 public class RegisterNewStudentDomain {
 
     private String identification;

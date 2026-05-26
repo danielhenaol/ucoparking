@@ -7,9 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.entity.StudentJPAEntity;
 
-/**
- * Repositorio JPA para acceder a la tabla de estudiantes.
- */
 @Repository
 public interface StudentJpaRepository extends JpaRepository<StudentJPAEntity, UUID> {
 

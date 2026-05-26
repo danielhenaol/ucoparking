@@ -29,18 +29,14 @@ public class RegisterNewStudentUseCaseImpl implements RegisterNewStudentUseCase 
     @Override
     @Transactional
     public Student execute(RegisterNewStudentDomain domain) {
-        // 1. Validar reglas de negocio
         validator.validate(domain);
 
-        // 2. Convertir Domain → Student para verificar duplicados
         Student student = useCaseMapper.toStudent(domain);
 
-        // 3. Verificar que no exista ya
         if (studentOutputPort.existsByIdentification(student.getIdentification())) {
             throw new UcoParkingException(MessagesEnum.STUDENT_ALREADY_EXISTS.getMessage());
         }
 
-        // 4. Persistir y retornar el Student ya guardado (con UUID real)
         return studentOutputPort.create(student);
     }
 }

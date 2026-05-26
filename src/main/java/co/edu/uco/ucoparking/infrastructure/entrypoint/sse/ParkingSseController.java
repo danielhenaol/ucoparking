@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-/**
- * Controlador SSE para emitir eventos de parqueadero en tiempo real.
- */
 @RestController
 @RequestMapping("/api/v1/parking/events")
 public class ParkingSseController {

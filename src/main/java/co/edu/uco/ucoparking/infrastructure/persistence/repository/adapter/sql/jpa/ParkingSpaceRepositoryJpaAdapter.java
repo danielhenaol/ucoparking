@@ -12,9 +12,6 @@ import co.edu.uco.ucoparking.domain.model.ParkingSpaceStatus;
 import co.edu.uco.ucoparking.infrastructure.persistence.mapper.ParkingSpaceMapperJPA;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.ParkingSpaceJpaRepository;
 
-/**
- * Adaptador JPA para espacios de parqueadero.
- */
 @Repository
 public class ParkingSpaceRepositoryJpaAdapter implements ParkingSpaceOutputPort {
 

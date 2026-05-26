@@ -22,9 +22,7 @@ import co.edu.uco.ucoparking.features.student.registernewstudent.application.inp
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.RegisterNewStudentDto;
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.StudentResponseDto;
 
-/**
- * Controlador REST para probar estudiantes desde Bruno y desde el frontend.
- */
+
 @RestController
 @RequestMapping("/api/v1/students")
 public class StudentController {

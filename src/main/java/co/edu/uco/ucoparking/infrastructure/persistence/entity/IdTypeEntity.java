@@ -2,9 +2,6 @@ package co.edu.uco.ucoparking.infrastructure.persistence.entity;
 
 import java.util.UUID;
 
-/**
- * Entidad de infraestructura para tipo de identificación.
- */
 public class IdTypeEntity {
 
     private UUID id;

@@ -9,9 +9,6 @@ import co.edu.uco.ucoparking.domain.model.ParkingSpace;
 import co.edu.uco.ucoparking.domain.model.ParkingSpaceStatus;
 import co.edu.uco.ucoparking.features.parking.listspaces.application.usecase.ListParkingSpacesUseCase;
 
-/**
- * Implementación del caso de uso para listar espacios.
- */
 @Service
 public class ListParkingSpacesUseCaseImpl implements ListParkingSpacesUseCase {
 

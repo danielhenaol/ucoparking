@@ -2,12 +2,6 @@ package co.edu.uco.ucoparking.domain.model;
 
 import java.util.UUID;
 
-/**
- * Modelo de dominio que representa un estudiante dentro del negocio.
- *
- * En dominio, los atributos son privados, los getters públicos
- * y los setters privados para proteger el estado del objeto.
- */
 public class Student {
 
     private UUID id;

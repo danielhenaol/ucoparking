@@ -13,9 +13,6 @@ import co.edu.uco.ucoparking.domain.model.ReservationStatus;
 import co.edu.uco.ucoparking.features.parking.occupyspace.application.usecase.OccupyParkingSpaceUseCase;
 import co.edu.uco.ucoparking.infrastructure.entrypoint.sse.ParkingSseController;
 
-/**
- * Implementación del caso de uso para ocupar un espacio reservado.
- */
 @Service
 public class OccupyParkingSpaceUseCaseImpl implements OccupyParkingSpaceUseCase {
 

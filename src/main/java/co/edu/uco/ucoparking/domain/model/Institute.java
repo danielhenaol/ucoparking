@@ -2,9 +2,6 @@ package co.edu.uco.ucoparking.domain.model;
 
 import java.util.UUID;
 
-/**
- * Modelo de dominio que representa una institución.
- */
 public class Institute {
 
     private UUID id;

@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component;
 import co.edu.uco.ucoparking.domain.model.Student;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.entity.StudentJPAEntity;
 
-/**
- * Mapper de infraestructura para convertir dominio a entidad JPA y entidad JPA a dominio.
- */
 @Component
 public class StudentMapperJPA implements MapperJPA<Student, StudentJPAEntity> {
 

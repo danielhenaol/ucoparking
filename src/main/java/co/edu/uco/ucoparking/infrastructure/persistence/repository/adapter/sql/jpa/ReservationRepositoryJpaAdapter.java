@@ -12,9 +12,6 @@ import co.edu.uco.ucoparking.domain.model.ReservationStatus;
 import co.edu.uco.ucoparking.infrastructure.persistence.mapper.ReservationMapperJPA;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.ReservationJpaRepository;
 
-/**
- * Adaptador JPA para reservas.
- */
 @Repository
 public class ReservationRepositoryJpaAdapter implements ReservationOutputPort {
 

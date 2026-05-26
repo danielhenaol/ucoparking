@@ -17,9 +17,6 @@ import co.edu.uco.ucoparking.domain.model.Reservation;
 import co.edu.uco.ucoparking.features.parking.reservespace.application.dto.ReservationResponseDto;
 import co.edu.uco.ucoparking.features.parking.reservespace.application.dto.ReserveParkingSpaceRequestDto;
 
-/**
- * Controlador REST para crear y ocupar reservas.
- */
 @RestController
 @RequestMapping("/api/v1/parking/reservations")
 public class ReservationController {

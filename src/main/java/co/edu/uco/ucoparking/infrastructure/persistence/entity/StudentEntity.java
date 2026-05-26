@@ -2,11 +2,6 @@ package co.edu.uco.ucoparking.infrastructure.persistence.entity;
 
 import java.util.UUID;
 
-/**
- * Entidad de infraestructura independiente de JPA.
- *
- * Aquí dejamos setters privados para proteger el objeto.
- */
 public class StudentEntity {
 
     private UUID id;

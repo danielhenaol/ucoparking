@@ -1,8 +1,5 @@
 package co.edu.uco.ucoparking.crosscutting.messagescatalog;
 
-/**
- * Catálogo centralizado de mensajes de la aplicación.
- */
 public enum MessagesEnum {
 
     STUDENT_IDENTIFICATION_REQUIRED("La identificación del estudiante es obligatoria."),

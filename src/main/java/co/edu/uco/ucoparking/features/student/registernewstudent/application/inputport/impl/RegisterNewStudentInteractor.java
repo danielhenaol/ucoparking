@@ -22,13 +22,9 @@ public class RegisterNewStudentInteractor implements RegisterNewStudentInput {
 
     @Override
     public StudentResponseDto execute(RegisterNewStudentDto data) {
-        // 1. DTO → RegisterNewStudentDomain
         var domain = mapper.toDomain(data);
-
-        // 2. UseCase procesa y retorna Student guardado
         var savedStudent = registerNewStudentUseCase.execute(domain);
 
-        // 3. Student guardado → StudentResponseDto con UUID real
         return buildResponse(savedStudent);
     }
 

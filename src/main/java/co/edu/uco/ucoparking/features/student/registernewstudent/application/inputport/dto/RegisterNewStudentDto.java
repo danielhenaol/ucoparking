@@ -1,11 +1,5 @@
 package co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto;
 
-/**
- * DTO que recibe los datos para registrar un estudiante desde Bruno, frontend o REST.
- *
- * En DTO los setters deben ser públicos porque Spring necesita llenar el objeto
- * a partir del JSON recibido.
- */
 public class RegisterNewStudentDto {
 
     private String identification;

@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component;
 import co.edu.uco.ucoparking.domain.model.ParkingSpace;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.entity.ParkingSpaceJPAEntity;
 
-/**
- * Mapper para convertir entre ParkingSpace de dominio y ParkingSpaceJPAEntity.
- */
 @Component
 public class ParkingSpaceMapperJPA implements MapperJPA<ParkingSpace, ParkingSpaceJPAEntity> {
 

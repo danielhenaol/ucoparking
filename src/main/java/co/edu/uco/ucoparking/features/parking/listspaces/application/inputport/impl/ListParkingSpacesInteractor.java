@@ -9,9 +9,6 @@ import co.edu.uco.ucoparking.domain.model.ParkingSpace;
 import co.edu.uco.ucoparking.domain.model.ParkingSpaceStatus;
 import co.edu.uco.ucoparking.features.parking.listspaces.application.usecase.ListParkingSpacesUseCase;
 
-/**
- * Interactor que conecta el controlador con el caso de uso de listar espacios.
- */
 @Service
 public class ListParkingSpacesInteractor implements ListParkingSpacesInputPort {
 

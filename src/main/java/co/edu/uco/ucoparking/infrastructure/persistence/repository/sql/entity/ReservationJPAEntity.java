@@ -11,9 +11,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * Entidad JPA que representa la tabla reservations.
- */
 @Entity
 @Table(name = "reservations")
 public class ReservationJPAEntity {

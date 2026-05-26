@@ -6,14 +6,11 @@ import co.edu.uco.ucoparking.features.student.registernewstudent.application.inp
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.StudentResponseDto;
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.usecase.domain.RegisterNewStudentDomain;
 
-/**
- * Mapper de inputport.
- * DTO de entrada → RegisterNewStudentDomain (objeto del caso de uso).
- */
+
 @Component
 public class RegisterNewStudentMapper {
 
-    /** DTO → Domain del caso de uso */
+
     public RegisterNewStudentDomain toDomain(RegisterNewStudentDto dto) {
         return new RegisterNewStudentDomain(
                 TextHelper.trim(dto.getIdentification()),
@@ -25,7 +22,7 @@ public class RegisterNewStudentMapper {
         );
     }
 
-    /** Domain del caso de uso → DTO de respuesta */
+
     public StudentResponseDto toResponse(RegisterNewStudentDomain domain) {
         return new StudentResponseDto(
                 null,

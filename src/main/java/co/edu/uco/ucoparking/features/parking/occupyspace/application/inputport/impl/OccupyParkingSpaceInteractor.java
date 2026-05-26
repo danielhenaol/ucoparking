@@ -8,9 +8,6 @@ import co.edu.uco.ucoparking.application.inputport.OccupyParkingSpaceInputPort;
 import co.edu.uco.ucoparking.domain.model.Reservation;
 import co.edu.uco.ucoparking.features.parking.occupyspace.application.usecase.OccupyParkingSpaceUseCase;
 
-/**
- * Interactor que conecta el controlador con el caso de uso de ocupar espacio.
- */
 @Service
 public class OccupyParkingSpaceInteractor implements OccupyParkingSpaceInputPort {
 

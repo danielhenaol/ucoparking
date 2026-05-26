@@ -5,9 +5,6 @@ import org.springframework.stereotype.Component;
 import co.edu.uco.ucoparking.domain.model.Reservation;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.entity.ReservationJPAEntity;
 
-/**
- * Mapper para convertir entre Reservation de dominio y ReservationJPAEntity.
- */
 @Component
 public class ReservationMapperJPA implements MapperJPA<Reservation, ReservationJPAEntity> {
 

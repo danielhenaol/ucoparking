@@ -1,8 +1,4 @@
 package co.edu.uco.ucoparking.crosscutting.helper;
-
-/**
- * Utilidades para trabajar con textos.
- */
 public final class TextHelper {
 
     private TextHelper() {

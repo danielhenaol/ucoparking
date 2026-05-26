@@ -7,9 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-/**
- * Entidad JPA que representa la tabla students.
- */
 @Entity
 @Table(name = "students")
 public class StudentJPAEntity {

@@ -2,9 +2,6 @@ package co.edu.uco.ucoparking.domain.model;
 
 import java.util.UUID;
 
-/**
- * Modelo de dominio que representa un tipo de identificación.
- */
 public class IdType {
 
     private UUID id;

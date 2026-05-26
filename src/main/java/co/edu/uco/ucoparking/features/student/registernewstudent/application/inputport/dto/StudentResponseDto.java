@@ -2,9 +2,6 @@ package co.edu.uco.ucoparking.features.student.registernewstudent.application.in
 
 import java.util.UUID;
 
-/**
- * DTO de respuesta para mostrar el estudiante registrado o consultado.
- */
 public class StudentResponseDto {
 
     private UUID id;

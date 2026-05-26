@@ -14,9 +14,7 @@ import co.edu.uco.ucoparking.infrastructure.persistence.mapper.StudentMapperJPA;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.StudentRepositoryPort;
 import co.edu.uco.ucoparking.infrastructure.persistence.repository.sql.StudentJpaRepository;
 
-/**
- * Adaptador JPA que implementa las operaciones CRUD de estudiantes.
- */
+
 @Repository
 public class StudentRepositoryJpaAdapter implements StudentOutputPort, StudentRepositoryPort {
 

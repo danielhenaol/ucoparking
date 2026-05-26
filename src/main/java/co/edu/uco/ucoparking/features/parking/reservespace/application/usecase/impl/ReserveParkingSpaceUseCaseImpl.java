@@ -16,13 +16,6 @@ import co.edu.uco.ucoparking.features.parking.reservespace.application.dto.Reser
 import co.edu.uco.ucoparking.features.parking.reservespace.application.usecase.ReserveParkingSpaceUseCase;
 import co.edu.uco.ucoparking.infrastructure.entrypoint.sse.ParkingSseController;
 
-/**
- * Implementación del caso de uso para reservar un espacio de parqueadero.
- *
- * Esta clase contiene la lógica principal de la reserva:
- * valida los datos, consulta el espacio, verifica disponibilidad,
- * cambia el estado del espacio y guarda la reserva.
- */
 @Service
 public class ReserveParkingSpaceUseCaseImpl implements ReserveParkingSpaceUseCase {
 
