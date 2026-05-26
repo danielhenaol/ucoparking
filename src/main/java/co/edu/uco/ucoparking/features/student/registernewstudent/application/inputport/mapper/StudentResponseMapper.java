@@ -1,5 +1,7 @@
 package co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.mapper;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import co.edu.uco.ucoparking.crosscutting.exception.UcoParkingException;
@@ -7,29 +9,13 @@ import co.edu.uco.ucoparking.crosscutting.helper.TextHelper;
 import co.edu.uco.ucoparking.domain.model.Student;
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.RegisterNewStudentDto;
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.StudentResponseDto;
-import co.edu.uco.ucoparking.features.student.registernewstudent.application.usecase.domain.RegisterNewStudentDomain;
 
 @Component
-public class RegisterNewStudentMapper {
-
-    public RegisterNewStudentDomain toDomain(RegisterNewStudentDto dto) {
-        if (dto == null) {
-            throw new UcoParkingException("Los datos del estudiante no pueden ser nulos.");
-        }
-
-        return new RegisterNewStudentDomain(
-                TextHelper.trim(dto.getIdentification()),
-                TextHelper.trim(dto.getInstitutionalCode()),
-                TextHelper.trim(dto.getName()),
-                TextHelper.trim(dto.getLastName()),
-                TextHelper.trim(dto.getEmail()),
-                TextHelper.trim(dto.getMobileNumber())
-        );
-    }
+public class StudentResponseMapper {
 
     public StudentResponseDto toResponse(Student student) {
         if (student == null) {
-            throw new UcoParkingException("El estudiante guardado no puede ser nulo.");
+            throw new UcoParkingException("El estudiante no puede ser nulo para construir la respuesta.");
         }
 
         return new StudentResponseDto(
@@ -40,6 +26,26 @@ public class RegisterNewStudentMapper {
                 student.getLastName(),
                 student.getEmail(),
                 student.getMobileNumber()
+        );
+    }
+
+    public Student toStudent(UUID id, RegisterNewStudentDto dto) {
+        if (id == null) {
+            throw new UcoParkingException("El id del estudiante no puede ser nulo.");
+        }
+
+        if (dto == null) {
+            throw new UcoParkingException("Los datos del estudiante no pueden ser nulos.");
+        }
+
+        return new Student(
+                id,
+                TextHelper.trim(dto.getIdentification()),
+                TextHelper.trim(dto.getInstitutionalCode()),
+                TextHelper.trim(dto.getName()),
+                TextHelper.trim(dto.getLastName()),
+                TextHelper.trim(dto.getEmail()),
+                TextHelper.trim(dto.getMobileNumber())
         );
     }
 }

@@ -1,12 +1,27 @@
 package co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
 public class RegisterNewStudentDto {
 
+    @NotBlank(message = "La identificación del estudiante es obligatoria.")
     private String identification;
+
+    @NotBlank(message = "El código institucional es obligatorio.")
     private String institutionalCode;
+
+    @NotBlank(message = "El nombre del estudiante es obligatorio.")
     private String name;
+
+    @NotBlank(message = "El apellido del estudiante es obligatorio.")
     private String lastName;
+
+    @NotBlank(message = "El correo del estudiante es obligatorio.")
+    @Email(message = "El correo del estudiante no tiene un formato válido.")
     private String email;
+
+    @NotBlank(message = "El número celular del estudiante es obligatorio.")
     private String mobileNumber;
 
     public RegisterNewStudentDto() {

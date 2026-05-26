@@ -1,7 +1,7 @@
 package co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.impl;
 
 import org.springframework.stereotype.Service;
-import co.edu.uco.ucoparking.domain.model.Student;
+
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.RegisterNewStudentInput;
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.RegisterNewStudentDto;
 import co.edu.uco.ucoparking.features.student.registernewstudent.application.inputport.dto.StudentResponseDto;
@@ -25,18 +25,6 @@ public class RegisterNewStudentInteractor implements RegisterNewStudentInput {
         var domain = mapper.toDomain(data);
         var savedStudent = registerNewStudentUseCase.execute(domain);
 
-        return buildResponse(savedStudent);
-    }
-
-    private StudentResponseDto buildResponse(Student student) {
-        return new StudentResponseDto(
-                student.getId(),
-                student.getIdentification(),
-                student.getInstitutionalCode(),
-                student.getName(),
-                student.getLastName(),
-                student.getEmail(),
-                student.getMobileNumber()
-        );
+        return mapper.toResponse(savedStudent);
     }
 }
