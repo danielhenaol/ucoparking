@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "notifications",
+  "info": {
+    "singularName": "notification",
+    "pluralName": "notifications",
+    "displayName": "Notification"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "technical": {
+      "type": "string"
+    },
+    "userMessage": {
+      "type": "string"
+    },
+    "general": {
+      "type": "string"
+    }
+  }
+}
