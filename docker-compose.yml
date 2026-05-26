@@ -21,6 +21,40 @@ services:
       - redis_data:/data
     restart: unless-stopped
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ucoparking-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://ucoparking-sqlserver:1433;databaseName=uco_parking;trustServerCertificate=true"
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: "Admin12345*"
+      SPRING_DATA_REDIS_HOST: slipless-coach-driftless-74881.db.redis.io
+      SPRING_DATA_REDIS_PORT: "19334"
+      SPRING_DATA_REDIS_PASSWORD: "lSxGcaw0ha39FDnp9OAUdXsOF9HAPMfg"
+      SPRING_DATA_REDIS_SSL_ENABLED: "true"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: "https://dev-kdmu5o5tazgm408k.us.auth0.com/"
+      
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ucoparking-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
   kong:
     image: kong:3.6-ubuntu
     container_name: ucoparking-kong
