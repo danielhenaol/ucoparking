@@ -2,6 +2,8 @@ package co.edu.uco.ucoparking.features.student.registernewstudent.application.in
 
 import java.util.UUID;
 
+import co.edu.uco.ucoparking.crosscutting.exception.UcoParkingException;
+
 public class StudentResponseDto {
 
     private UUID id;
@@ -17,13 +19,13 @@ public class StudentResponseDto {
 
     public StudentResponseDto(UUID id, String identification, String institutionalCode, String name,
                               String lastName, String email, String mobileNumber) {
-        this.id = id;
-        this.identification = identification;
-        this.institutionalCode = institutionalCode;
-        this.name = name;
-        this.lastName = lastName;
-        this.email = email;
-        this.mobileNumber = mobileNumber;
+        setId(id);
+        setIdentification(identification);
+        setInstitutionalCode(institutionalCode);
+        setName(name);
+        setLastName(lastName);
+        setEmail(email);
+        setMobileNumber(mobileNumber);
     }
 
     public UUID getId() {
@@ -31,6 +33,9 @@ public class StudentResponseDto {
     }
 
     public void setId(UUID id) {
+        if (id == null) {
+            throw new UcoParkingException("El id del estudiante en la respuesta no puede ser nulo.");
+        }
         this.id = id;
     }
 
@@ -39,7 +44,10 @@ public class StudentResponseDto {
     }
 
     public void setIdentification(String identification) {
-        this.identification = identification;
+        if (identification == null || identification.trim().isEmpty()) {
+            throw new UcoParkingException("La identificación del estudiante en la respuesta no puede ser nula o vacía.");
+        }
+        this.identification = identification.trim();
     }
 
     public String getInstitutionalCode() {
@@ -47,7 +55,10 @@ public class StudentResponseDto {
     }
 
     public void setInstitutionalCode(String institutionalCode) {
-        this.institutionalCode = institutionalCode;
+        if (institutionalCode == null || institutionalCode.trim().isEmpty()) {
+            throw new UcoParkingException("El código institucional en la respuesta no puede ser nulo o vacío.");
+        }
+        this.institutionalCode = institutionalCode.trim();
     }
 
     public String getName() {
@@ -55,7 +66,10 @@ public class StudentResponseDto {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new UcoParkingException("El nombre del estudiante en la respuesta no puede ser nulo o vacío.");
+        }
+        this.name = name.trim();
     }
 
     public String getLastName() {
@@ -63,7 +77,10 @@ public class StudentResponseDto {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new UcoParkingException("El apellido del estudiante en la respuesta no puede ser nulo o vacío.");
+        }
+        this.lastName = lastName.trim();
     }
 
     public String getEmail() {
@@ -71,7 +88,10 @@ public class StudentResponseDto {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (email == null || email.trim().isEmpty()) {
+            throw new UcoParkingException("El correo del estudiante en la respuesta no puede ser nulo o vacío.");
+        }
+        this.email = email.trim();
     }
 
     public String getMobileNumber() {
@@ -79,6 +99,9 @@ public class StudentResponseDto {
     }
 
     public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
+        if (mobileNumber == null || mobileNumber.trim().isEmpty()) {
+            throw new UcoParkingException("El celular del estudiante en la respuesta no puede ser nulo o vacío.");
+        }
+        this.mobileNumber = mobileNumber.trim();
     }
 }
