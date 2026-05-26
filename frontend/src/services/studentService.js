@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/v1/students';
+const API_URL = 'http://localhost:8000/api/v1/students';
 
 async function handleResponse(response) {
   if (!response.ok) {

@@ -3,7 +3,7 @@ _transform: true
 
 services:
   - name: ucoparking-backend
-    url: http://host.docker.internal:8080
+    url: http://ucoparking-backend:8080
     routes:
       - name: backend-route
         paths:
@@ -34,11 +34,20 @@ services:
           - /cms
         strip_path: false
 
+  - name: ucoparking-frontend
+    url: http://ucoparking-frontend:80
+    routes:
+      - name: frontend-route
+        paths:
+          - /
+        strip_path: false
+
 plugins:
   - name: cors
     config:
       origins:
         - "http://localhost:5173"
+        - "http://localhost"
       methods:
         - GET
         - POST
