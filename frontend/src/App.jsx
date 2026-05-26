@@ -358,7 +358,6 @@ function App() {
         <div className="heroCard">
           <Car size={46} />
           <strong>{summary.total}</strong>
-          <span>espacios registrados</span>
         </div>
       </section>
 
