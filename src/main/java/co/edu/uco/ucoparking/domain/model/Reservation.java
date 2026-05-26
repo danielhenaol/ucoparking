@@ -72,6 +72,14 @@ public class Reservation {
         );
     }
 
+    public Reservation expire() {
+        return new Reservation(
+                id, parkingSpaceId, vehiclePlate,
+                entryTime, exitTime, reservationTime,
+                expirationTime, ReservationStatus.EXPIRED
+        );
+    }
+
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expirationTime);
     }
